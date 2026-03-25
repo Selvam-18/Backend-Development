@@ -1,2 +1,2 @@
 # Backend-Development
-The journey of getting into the world of Backend with Java with Spring Ecosystem.
+The journey of getting into the world of Backend in Java with Spring Ecosystem.
