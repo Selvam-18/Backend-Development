@@ -48,7 +48,7 @@ public class SecurityConfig {
                 .requestMatchers("/register", "/login")
                 .permitAll()
                 .anyRequest().authenticated());
-        http.httpBasic(Customizer.withDefaults());
+//        http.httpBasic(Customizer.withDefaults());
         http.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
         http.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
         

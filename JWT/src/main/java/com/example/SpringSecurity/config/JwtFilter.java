@@ -12,10 +12,12 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
+import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 
+@Component
 public class JwtFilter extends OncePerRequestFilter {
 
     @Autowired
@@ -34,16 +36,25 @@ public class JwtFilter extends OncePerRequestFilter {
 
         if(authHeader != null && authHeader.startsWith("Bearer ")){
             token = authHeader.substring(7);
-            username = jwtService.extractUsername();
-        }
+            System.out.println("Token "+ token);
+            username = jwtService.extractUserName(token);
 
-        if(username != null && SecurityContextHolder.getContext().getAuthentication() != null) {
+            System.out.println("[" + token + "] TOKEN");
+            System.out.println(token.split("\\.").length + " Length");
+        }
+        System.out.println("Conditions: " + SecurityContextHolder.getContext().getAuthentication());
+        if(username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
 
             UserDetails userDetails = context.getBean(MyUserDetailsService.class).loadUserByUsername(username);
-
-            if(jwtService.validateToken(username, userDetails)) {
+            System.out.println("About to validate token");
+//            System.out.println(jwtService.validateToken(username, userDetails) + " Check boolean");
+            if(jwtService.validateToken(token, userDetails)) {
+                System.out.println("Finally got here");
                 UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+
                 authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+
+                System.out.println(authToken + "AUTH TOKEN");
                 SecurityContextHolder.getContext().setAuthentication(authToken);
             }
         }
